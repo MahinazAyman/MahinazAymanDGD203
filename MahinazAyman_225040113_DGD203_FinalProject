@@ -1,0 +1,143 @@
+﻿using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        // Create a room
+        Room startingRoom = new Room("Starting Room", "This is the starting room with some basic description.");
+
+        // Enter the room
+        startingRoom.Enter();
+
+        // Walk around and get clues
+        WalkAroundAndCollectClues(startingRoom);
+
+        // Move to the room with an NPC
+        Room npcRoom = new RoomWithNPC("Room with NPC", "You've entered a room with an NPC who has a riddle.");
+        MoveToRoom(npcRoom);
+    }
+
+    static void WalkAroundAndCollectClues(Room currentRoom)
+    {
+        Console.WriteLine("You start walking around...");
+
+        // Simulate walking and getting clues at certain points
+        for (int i = 0; i < 3; i++)
+        {
+            Console.WriteLine($"Walking... Step {i + 1}");
+
+            // Check if the player finds a clue at this point
+            Console.WriteLine("You found a clue!");
+        }
+
+        Console.WriteLine("You've finished walking around.");
+    }
+
+    static void MoveToRoom(Room room)
+    {
+        // Additional logic can be added here (e.g., interactions with NPC)
+        room.Enter();
+    }
+
+    static bool FindClueAtRandom()
+    {
+        // Simulate a chance of finding a clue
+        Random random = new Random();
+        return random.Next(0, 2) == 0; // 50% chance of finding a clue
+    }
+}
+
+class Room
+{
+    public string Name { get; set; }
+    public string Description { get; set; }
+
+    public Room(string name, string description)
+    {
+        Name = name;
+        Description = description;
+    }
+
+    public virtual void Enter()
+    {
+        Console.WriteLine($"CONG.YOU COLLECT THE CLUE");
+        Console.WriteLine(Description);
+    }
+}
+
+class RoomWithNPC : Room
+{
+    public RoomWithNPC(string name, string description) : base(name, description)
+    {
+    }
+
+    public override void Enter()
+    {
+        base.Enter();
+        Console.WriteLine("An NPC in the room asks you a riddle.");
+        // Add logic to handle the riddle and player's response
+        AskRiddle();
+    }
+
+    void AskRiddle()
+    {
+        Console.WriteLine("What has keys but can't open locks?");
+
+        // Display answer options
+        List<string> answerOptions = new List<string> { "1. A piano", "2. A car", "3. A computer", "4. A door", "5. A book" };
+        foreach (string option in answerOptions)
+        {
+            Console.WriteLine(option);
+        }
+
+        // Get player's answer
+        int playerChoice = GetPlayerChoice(1, 5);
+
+        // First trial
+        if (IsCorrectAnswer(playerChoice))
+        {
+            Console.WriteLine("NPC: IAM IMPRESSED.");
+        }
+        else
+        {
+            Console.WriteLine("NPC:i will give you your last chance.");
+            // Get player's answer for the second trial
+            playerChoice = GetPlayerChoice(1, 5);
+
+            // Second trial
+            if (IsCorrectAnswer(playerChoice))
+            {
+                Console.WriteLine(" NPC: IAM IMPRESSED.");
+            }
+            else
+            {
+                Console.WriteLine("NPC: I HAVE TO KILL YOU.");
+            }
+        }
+    }
+
+    int GetPlayerChoice(int min, int max)
+    {
+        int choice;
+        while (true)
+        {
+            Console.Write($"Enter your choice ({min}-{max}): ");
+            if (int.TryParse(Console.ReadLine(), out choice) && choice >= min && choice <= max)
+            {
+                return choice;
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a valid choice.");
+            }
+        }
+    }
+
+    bool IsCorrectAnswer(int playerChoice)
+    {
+        // The correct answer is option 1 (A piano)
+        return playerChoice == 1;
+    }
+}
